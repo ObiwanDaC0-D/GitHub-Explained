@@ -153,3 +153,9 @@ The Visual Lab now contains a dynamically rendered SVG commit graph derived from
 The graph is **instructional**, not a complete Git object graph: the terminal still models only a limited history, and merge behavior is simplified. The existing milestone animation remains available. Static checks include graph node, edge, branch-head, and remote-head assertions.
 
 Manual verification: clone, create `feature/tuner`, commit twice, push after the first commit, inspect differing local and remote pointers, push again, merge, and reset. Check that graph labels and edges update appropriately.
+
+## Optimization Stage B — Git history semantics
+
+The commit graph now models explicit parent relationships. When `main` remains at the shared base, merging the feature branch is shown as a **fast-forward** (the `main` pointer moves to the feature tip without adding a synthetic merge commit). The graph helper also supports divergent branch histories and creates a conceptual two-parent merge node in that case.
+
+The Command Lab still follows its guided feature-branch exercise and **does not yet allow creating commits directly on main**, so divergent history and conflict resolution are not yet available as interactive terminal exercises. Regression tests cover both graph shapes. The visualization is educational and is not a complete implementation of Git's object model.
