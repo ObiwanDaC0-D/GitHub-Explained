@@ -145,3 +145,11 @@ The stage derivation lives in `assets/git-simulator.js` as `timelineFromLab(lab)
 4. Push and confirm the published stage; merge and confirm the merged stage.
 5. Reset the terminal and verify the visual returns to the initial stage.
 6. Turn off Follow Command Lab and verify demo playback controls work.
+
+## Optimization Stage B — Live commit graph
+
+The Visual Lab now contains a dynamically rendered SVG commit graph derived from Command Lab history. It displays simulated commit nodes, parent connections, local branch heads, published remote branch positions, and a conceptual merge node. It refreshes after terminal commands, including reset.
+
+The graph is **instructional**, not a complete Git object graph: the terminal still models only a limited history, and merge behavior is simplified. The existing milestone animation remains available. Static checks include graph node, edge, branch-head, and remote-head assertions.
+
+Manual verification: clone, create `feature/tuner`, commit twice, push after the first commit, inspect differing local and remote pointers, push again, merge, and reset. Check that graph labels and edges update appropriately.
