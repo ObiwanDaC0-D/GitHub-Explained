@@ -102,3 +102,16 @@ node scripts/check.mjs
 ```
 
 These checks validate JavaScript syntax, navigation, and selected regression safeguards. They are **not browser end-to-end tests** and do not guarantee all interactions work. Review the GitHub Actions run to confirm the workflow passed. Additional architectural work, accessibility testing, and the remaining optimization phases are pending.
+
+## Optimization Stage A — Maintainable assets
+
+The application has been separated into:
+- `index.html` — markup and semantic structure
+- `assets/styles.css` — responsive styling
+- `assets/app.js` — interactive learning behavior
+- `scripts/check.mjs` — dependency-free static checks
+- `.github/workflows/verify.yml` — CI execution
+
+The static test now checks the asset links, parses the extracted JavaScript, checks nine navigation sections, validates direct DOM ID references, and verifies selected safeguards.
+
+**Note:** JavaScript remains in a single app module for now. Further separation of state models, instructional content, and UI behavior is planned. Browser interaction and accessibility audits remain pending.
