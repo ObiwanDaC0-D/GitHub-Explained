@@ -21,7 +21,7 @@ For GitHub Pages, go to **Settings → Pages**, choose **Deploy from a branch**,
 
 ## Important limitations
 
-The simulator is a conceptual model, not a real Git terminal. It does not edit files or access GitHub. It simplifies merges and does not simulate conflicts, remote divergence, authentication, or Git object internals. Simulator and quiz progress are kept in memory only and reset when the page reloads.
+The simulator is a conceptual model, not a real Git terminal. It does not edit files or access GitHub. It simplifies merges and does not simulate conflicts, remote divergence, authentication, or Git object internals. Simulator and quiz progress are kept in memory only and reset when the page reloads. Learning Path completion is stored in browser localStorage when permitted.
 
 ## Architecture
 
@@ -29,7 +29,7 @@ One dependency-free `index.html` containing semantic HTML, responsive CSS, and v
 
 ## Manual smoke test
 
-1. Open `index.html` and switch among all five tabs.
+1. Open `index.html` and switch among all nine tabs.
 2. In the simulator, try committing before staging; expect a helpful prerequisite message.
 3. Run Clone → Create branch → Edit files → Stage → Commit → Push → Merge; expect local main after merge.
 4. Reset the simulator; expect all counters to clear.
@@ -87,3 +87,18 @@ The lab provides contextual errors, status information, and a **Show next step**
 6. Reset the lab and verify all state counters return to initial values.
 
 The terminal is intentionally simplified: it does not implement real Git parsing, merge conflicts, detached HEAD, network synchronization, authentication, or filesystem operations.
+
+## Optimization Stage A — Stabilization and CI
+
+- Improved next-step hints in the Command Lab, especially after branching, committing, and merging.
+- Strengthened safeguards for unpublished feature commits and pending changes.
+- Added `scripts/check.mjs` using Node.js built-in assertions and VM syntax compilation.
+- Added `.github/workflows/verify.yml` to run the checks on pushes and pull requests.
+
+Run the checks locally with:
+
+```bash
+node scripts/check.mjs
+```
+
+These checks validate JavaScript syntax, navigation, and selected regression safeguards. They are **not browser end-to-end tests** and do not guarantee all interactions work. Review the GitHub Actions run to confirm the workflow passed. Additional architectural work, accessibility testing, and the remaining optimization phases are pending.
