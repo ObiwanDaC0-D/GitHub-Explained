@@ -36,7 +36,7 @@ assert.ok(css.includes('@media'), 'Responsive CSS should be present');
 assert.ok(existsSync(new URL('.github/workflows/verify.yml', base)), 'CI workflow must exist');
 console.log('PASS: linked assets, JavaScript syntax, nine sections, DOM references, safeguards, responsive CSS and CI.');
 
-const context=vm.createContext({});vm.runInContext(engine+'\nthis.testApi={initialState,transition,timelineFromLab}',context);
+const context=vm.createContext({});vm.runInContext(engine+'\nthis.testApi={initialState,transition,timelineFromLab,graphFromLab}',context);
 let state=context.testApi.initialState();
 const step=(action)=>{const result=context.testApi.transition(state,action);state=result.state;return result.message;};
 assert.match(step('commit'),/Clone/);
@@ -60,3 +60,11 @@ lab.history.push({branch:'feature/tuner'});assert.equal(timeline(lab).step,2);
 lab.remote['feature/tuner']=1;assert.equal(timeline(lab).step,3);
 lab.merged=true;assert.equal(timeline(lab).step,4);
 console.log('PASS: Command Lab to Visual Lab timeline stage mapping.');
+
+const graph=context.testApi.graphFromLab;
+assert.equal(graph({cloned:false}).nodes.length,0);
+const model={cloned:true,branch:'feature/tuner',branches:['main','feature/tuner'],history:[{branch:'feature/tuner',message:'Tuner'},{branch:'feature/tuner',message:'Fix'}],remote:{main:0,'feature/tuner':1},merged:false};
+let g=graph(model);assert.equal(g.nodes.length,3);assert.equal(g.heads['feature/tuner'],'c2');assert.equal(g.remoteHeads['feature/tuner'],'c1');
+model.merged=true;g=graph(model);assert.equal(g.heads.main,'merge');assert.equal(g.edges.filter(e=>e.type==='merge').length,2);
+assert.ok(html.includes('id="commitGraph"'));assert.ok(js.includes('renderCommitGraph()'));
+console.log('PASS: Commit graph nodes, branch heads, remote heads and merge edges.');
