@@ -28,21 +28,37 @@ function timelineFromLab(lab){
  if(pushed>=count)return {step:3,detail:count+" feature commit(s) published. Merge when ready."};
  return {step:2,detail:count+" local feature commit(s), "+pushed+" published."};
 }
-/* Deterministic, read-only commit graph derived from Command Lab history. */
+/* Build a simplified DAG with explicit commit parents and branch heads. */
 function graphFromLab(lab){
  if(!lab?.cloned)return {nodes:[],edges:[],heads:{},remoteHeads:{},current:""};
  const history=Array.isArray(lab.history)?lab.history:[];
  const branches=Array.isArray(lab.branches)?lab.branches:["main"];
- const nodes=[{id:"base",branch:"main",message:"Initial commit",parent:null}];
- const edges=[];const heads={main:"base"};
+ const nodes=[{id:"base",branch:"main",message:"Initial commit",parents:[]}];
+ const edges=[],heads={main:"base"};
  for(const branch of branches)if(branch!=="main")heads[branch]="base";
  history.forEach((entry,i)=>{
-  const branch=entry.branch||"main",id="c"+(i+1),parent=heads[branch]||"base";
-  nodes.push({id,branch,message:String(entry.message||"Commit"),parent});
-  edges.push({from:parent,to:id,type:"commit"});heads[branch]=id;
+  const branch=entry.branch||"main",id="c"+(i+1);
+  const parents=Array.isArray(entry.parents)?entry.parents:[heads[branch]||"base"];
+  nodes.push({id,branch,message:String(entry.message||"Commit"),parents});
+  for(const parent of parents)edges.push({from:parent,to:id,type:"commit"});
+  heads[branch]=id;
  });
- if(lab.merged&&heads["feature/tuner"]){edges.push({from:heads["feature/tuner"],to:"merge",type:"merge"});edges.push({from:"base",to:"merge",type:"merge"});nodes.push({id:"merge",branch:"main",message:"Merge feature/tuner",parent:"base"});heads.main="merge";}
- const remoteHeads={};for(const [branch,count] of Object.entries(lab.remote||{})){if(branch==="main"){remoteHeads.main=lab.merged?"merge":"base";continue;}const commits=nodes.filter(n=>n.branch===branch);remoteHeads[branch]=count>0?commits[Math.min(count,commits.length)-1]?.id||"base":"base";}
+ const feature=heads["feature/tuner"];
+ if(lab.merged&&feature&&feature!=="base"){
+  const main=heads.main;
+  if(main==="base"){heads.main=feature;} // Fast-forward: no synthetic merge commit.
+  else if(main!==feature){
+   nodes.push({id:"merge",branch:"main",message:"Merge feature/tuner",parents:[main,feature]});
+   edges.push({from:main,to:"merge",type:"merge"},{from:feature,to:"merge",type:"merge"});
+   heads.main="merge";
+  }
+ }
+ const remoteHeads={};
+ for(const [branch,count] of Object.entries(lab.remote||{})){
+  if(branch==="main"){remoteHeads.main=lab.merged&&count>0?heads.main:"base";continue;}
+  const commits=nodes.filter(n=>n.branch===branch);
+  remoteHeads[branch]=count>0?commits[Math.min(count,commits.length)-1]?.id||"base":"base";
+ }
  return {nodes,edges,heads,remoteHeads,current:lab.branch||"main"};
 }
 if(typeof window!=="undefined")window.GitSimulator={initialState,transition,timelineFromLab,graphFromLab};
