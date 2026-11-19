@@ -30,11 +30,13 @@ assert.ok(js.includes('lab.remote["feature/tuner"]<lab.history.filter'), 'Merge 
 assert.ok(engine.includes('s.edited||s.staged'), 'Simulator must reject merge with pending changes');
 assert.ok(js.includes('lab.merged?"git push"'), 'Hints should handle completed merge');
 assert.ok(html.includes('aria-live="polite"'), 'Status feedback should be announced');
+assert.ok(html.includes('id="visMode"'), 'Visual Lab mode toggle should exist');
+assert.ok(js.includes('syncLabVisual()'), 'Command Lab must update Visual Lab');
 assert.ok(css.includes('@media'), 'Responsive CSS should be present');
 assert.ok(existsSync(new URL('.github/workflows/verify.yml', base)), 'CI workflow must exist');
 console.log('PASS: linked assets, JavaScript syntax, nine sections, DOM references, safeguards, responsive CSS and CI.');
 
-const context=vm.createContext({});vm.runInContext(engine+'\nthis.testApi={initialState,transition}',context);
+const context=vm.createContext({});vm.runInContext(engine+'\nthis.testApi={initialState,transition,timelineFromLab}',context);
 let state=context.testApi.initialState();
 const step=(action)=>{const result=context.testApi.transition(state,action);state=result.state;return result.message;};
 assert.match(step('commit'),/Clone/);
@@ -48,3 +50,13 @@ assert.match(step('edit'),/feature branch/);
 state=context.testApi.initialState();step('clone');step('branch');step('edit');step('stage');
 assert.match(step('merge'),/pending edits/);
 console.log('PASS: Guided simulator state transition regression tests.');
+
+const timeline=context.testApi.timelineFromLab;
+assert.equal(timeline({cloned:false}).step,0);
+const lab={cloned:true,branches:['main'],history:[],remote:{},merged:false};
+assert.equal(timeline(lab).step,0);
+lab.branches.push('feature/tuner');assert.equal(timeline(lab).step,1);
+lab.history.push({branch:'feature/tuner'});assert.equal(timeline(lab).step,2);
+lab.remote['feature/tuner']=1;assert.equal(timeline(lab).step,3);
+lab.merged=true;assert.equal(timeline(lab).step,4);
+console.log('PASS: Command Lab to Visual Lab timeline stage mapping.');
