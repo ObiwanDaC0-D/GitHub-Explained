@@ -115,3 +115,13 @@ The application has been separated into:
 The static test now checks the asset links, parses the extracted JavaScript, checks nine navigation sections, validates direct DOM ID references, and verifies selected safeguards.
 
 **Note:** JavaScript remains in a single app module for now. Further separation of state models, instructional content, and UI behavior is planned. Browser interaction and accessibility audits remain pending.
+
+## Optimization Stage B — Guided simulator engine
+
+The guided simulator now delegates its state transitions to `assets/git-simulator.js`. This file exposes a small browser-compatible `window.GitSimulator` API with `initialState()` and `transition(state, action)`.
+
+The app loads the engine before `assets/app.js` using deferred classic scripts, preserving the ability to open `index.html` directly from a local filesystem.
+
+The dependency-free `scripts/check.mjs` now includes state-transition regression assertions for the guided simulator in addition to structural checks. The separate Command Lab retains its existing implementation; consolidating it with the guided engine is future work.
+
+**Verification caveat:** GitHub accepted the commits, but a successful GitHub Actions run and browser-based checks have not yet been confirmed.
