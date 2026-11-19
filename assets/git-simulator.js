@@ -15,4 +15,17 @@ function transition(state,action){
  return {state:s,message};
 }
 
-if(typeof window!=="undefined")window.GitSimulator={initialState,transition};
+/* Derive a conceptual branch diagram stage from Command Lab state. */
+function timelineFromLab(lab){
+ if(!lab||!lab.cloned)return {step:0,detail:"Clone a repository to begin."};
+ const branches=Array.isArray(lab.branches)?lab.branches:[];
+ if(lab.merged)return {step:4,detail:"Feature merged into main (simulated)."};
+ if(!branches.includes("feature/tuner"))return {step:0,detail:"Repository cloned. Create feature/tuner."};
+ const history=Array.isArray(lab.history)?lab.history:[];
+ const count=history.filter(x=>x.branch==="feature/tuner").length;
+ if(!count)return {step:1,detail:"Feature branch created. Edit, test, stage, and commit."};
+ const pushed=Number(lab.remote?.["feature/tuner"]||0);
+ if(pushed>=count)return {step:3,detail:count+" feature commit(s) published. Merge when ready."};
+ return {step:2,detail:count+" local feature commit(s), "+pushed+" published."};
+}
+if(typeof window!=="undefined")window.GitSimulator={initialState,transition,timelineFromLab};
