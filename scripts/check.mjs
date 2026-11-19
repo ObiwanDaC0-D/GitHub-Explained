@@ -65,6 +65,9 @@ const graph=context.testApi.graphFromLab;
 assert.equal(graph({cloned:false}).nodes.length,0);
 const model={cloned:true,branch:'feature/tuner',branches:['main','feature/tuner'],history:[{branch:'feature/tuner',message:'Tuner'},{branch:'feature/tuner',message:'Fix'}],remote:{main:0,'feature/tuner':1},merged:false};
 let g=graph(model);assert.equal(g.nodes.length,3);assert.equal(g.heads['feature/tuner'],'c2');assert.equal(g.remoteHeads['feature/tuner'],'c1');
-model.merged=true;g=graph(model);assert.equal(g.heads.main,'merge');assert.equal(g.edges.filter(e=>e.type==='merge').length,2);
+model.merged=true;g=graph(model);assert.equal(g.heads.main,'c2');assert.equal(g.nodes.length,3); // Fast-forward has no synthetic merge commit
+assert.equal(g.nodes.find(n=>n.id==='c2').parents[0],'c1');
+const divergent={...model,history:[{branch:'main',message:'Main update'},{branch:'feature/tuner',message:'Feature update'}],remote:{main:0,'feature/tuner':1}};
+const merged=graph(divergent);assert.equal(merged.heads.main,'merge');assert.equal(merged.nodes.find(n=>n.id==='merge').parents.length,2);assert.equal(merged.edges.filter(e=>e.type==='merge').length,2);
 assert.ok(html.includes('id="commitGraph"'));assert.ok(js.includes('renderCommitGraph()'));
 console.log('PASS: Commit graph nodes, branch heads, remote heads and merge edges.');
