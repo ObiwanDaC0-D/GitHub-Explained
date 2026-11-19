@@ -125,3 +125,23 @@ The app loads the engine before `assets/app.js` using deferred classic scripts, 
 The dependency-free `scripts/check.mjs` now includes state-transition regression assertions for the guided simulator in addition to structural checks. The separate Command Lab retains its existing implementation; consolidating it with the guided engine is future work.
 
 **Verification caveat:** GitHub accepted the commits, but a successful GitHub Actions run and browser-based checks have not yet been confirmed.
+
+## Optimization Stage B — Linked Visual Lab
+
+The **Visual Lab** now offers two modes:
+
+- **Demo mode** (default): Play or step through the existing illustrated branch workflow.
+- **Follow Command Lab**: Turn on the toggle, open the Command Lab, and run the exercise. The Visual Lab updates its branch stage after each terminal command.
+
+The stage derivation lives in `assets/git-simulator.js` as `timelineFromLab(lab)`. It maps repository state to cloned, branched, locally committed, pushed, and merged stages. The CI smoke checks include stage-mapping assertions.
+
+**Limitations:** This is a conceptual, milestone-based diagram, not a complete Git commit graph. The Command Lab and guided button simulator remain separate state machines. Demo playback is disabled while following terminal state. Terminal state resets on page reload.
+
+### Manual linked-mode checks
+
+1. Open Visual Lab and turn on **Follow Command Lab**.
+2. Open Command Lab, clone, create `feature/tuner`, edit, test, stage, and commit.
+3. Return to Visual Lab and verify the local-commit stage.
+4. Push and confirm the published stage; merge and confirm the merged stage.
+5. Reset the terminal and verify the visual returns to the initial stage.
+6. Turn off Follow Command Lab and verify demo playback controls work.
