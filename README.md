@@ -39,3 +39,19 @@ One dependency-free `index.html` containing semantic HTML, responsive CSS, and v
 ## License
 
 No license has been added yet; the repository owner can choose one.
+
+## Phase 2 — Interactive learning
+
+- **Learning Path:** Six sequential modules with practice tasks, progress indicator, and browser-local completion storage (when supported).
+- **Visual Lab:** Animated branch-and-merge timeline with play/pause and manual step controls.
+- **Scenarios:** Six interactive decision exercises with explanatory feedback.
+- All original lessons, workflow examples, simulator, quiz, and reference materials remain available.
+
+### Phase 2 manual checks
+
+1. Navigate to Learning Path; complete module 1 and verify module 2 unlocks.
+2. Refresh and confirm progress persists in browsers permitting localStorage.
+3. Reset progress and confirm all modules return to incomplete.
+4. Play and pause the Visual Lab; check manual controls and end state.
+5. Answer each scenario and confirm correct-answer highlighting and feedback.
+6. Revisit original simulator, quiz, and reference tabs for regressions.
