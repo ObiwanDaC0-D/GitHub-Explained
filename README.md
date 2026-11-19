@@ -55,3 +55,35 @@ No license has been added yet; the repository owner can choose one.
 4. Play and pause the Visual Lab; check manual controls and end state.
 5. Answer each scenario and confirm correct-answer highlighting and feedback.
 6. Revisit original simulator, quiz, and reference tabs for regressions.
+
+## Phase 3 — Git Command Laboratory
+
+The **Command Lab** tab contains a simulated terminal with commands `git clone`, `git status`, `git switch`, `git checkout`, `git branch`, `git add`, `git commit`, `git log`, `git push`, `git pull`, and `git merge`. Training-only commands `edit`, `test`, `help`, `clear`, and `reset` support guided exercises.
+
+Try the full exercise:
+
+```bash
+git clone https://github.com/example/Metronome.git
+git switch -c feature/tuner
+edit
+test
+git add .
+git commit -m "Add tuner"
+git push -u origin feature/tuner
+git switch main
+git merge feature/tuner
+git push
+```
+
+The lab provides contextual errors, status information, and a **Show next step** hint. It runs entirely in the browser and **never executes actual shell commands or changes a real repository**.
+
+### Phase 3 manual checks
+
+1. Try `git status` before cloning and confirm a not-a-repository message.
+2. Clone the sample repository and verify the local repository display.
+3. Attempt a commit before staging and verify a prerequisite message.
+4. Run the full exercise above and verify the merge completion message.
+5. Run `git status`, `git branch`, and `git log` at different points.
+6. Reset the lab and verify all state counters return to initial values.
+
+The terminal is intentionally simplified: it does not implement real Git parsing, merge conflicts, detached HEAD, network synchronization, authentication, or filesystem operations.
